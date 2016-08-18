@@ -120,7 +120,10 @@ public final class ButterKnifeProcessor extends AbstractProcessor {
     elementUtils = env.getElementUtils();
     typeUtils = env.getTypeUtils();
     filer = env.getFiler();
-    trees = Trees.instance(processingEnv);
+    try {
+      trees = Trees.instance(processingEnv);
+    } catch (IllegalArgumentException ignored) {
+    }
   }
 
   @Override public Set<String> getSupportedAnnotationTypes() {
@@ -1157,6 +1160,8 @@ public final class ButterKnifeProcessor extends AbstractProcessor {
   }
 
   private void scanForRClasses(RoundEnvironment env) {
+    if (trees == null) return;
+
     RClassScanner scanner = new RClassScanner();
 
     for (Class<? extends Annotation> annotation : getSupportedAnnotations()) {
